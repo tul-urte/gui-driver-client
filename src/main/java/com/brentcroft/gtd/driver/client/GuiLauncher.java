@@ -1,8 +1,7 @@
 package com.brentcroft.gtd.driver.client;
 
 import com.brentcroft.gtd.driver.harness.GuiHarness;
-import com.brentcroft.gtd.utilities.DateUtils;
-import com.brentcroft.gtd.utilities.Waiter;
+import com.brentcroft.util.Waiter8;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
 
 /**
@@ -46,7 +46,9 @@ public class GuiLauncher
     //
     private double firstEchoTimeout = 1.0;
 
-    boolean addShutdownHook = true;
+    private boolean addShutdownHook = true;
+
+    private Thread shutdownHook;
 
     private Process processRun = null;
 
@@ -146,7 +148,7 @@ public class GuiLauncher
             if ( applicationNotifySnapshotDelay != null )
             {
                 commands.add( "-snapshot-delay" );
-                commands.add( "" + DateUtils.secondsToMillis( applicationNotifySnapshotDelay ) );
+                commands.add( "" + secondsToMillis( applicationNotifySnapshotDelay ) );
             }
 
         }
@@ -266,40 +268,10 @@ public class GuiLauncher
         {
             logger.info( "Adding stop hook to close program under test..." );
 
+            shutdownHook = newShutdownHook();
+
             // add a stop hook so when this scope closes we also stop the application
-            Runtime.getRuntime().addShutdownHook( new Thread( () ->
-            {
-                logger.info( "Running stop hook: process=" + processRun );
-
-                if ( driver != null )
-                {
-                    try
-                    {
-                        Object response = driver.shutdown( 0 );
-
-                        if ( logger.isDebugEnabled() )
-                        {
-                            logger.debug( "Stop hook: Driver.shutdown: response=" + response );
-                        }
-                    }
-                    catch ( Exception e )
-                    {
-                        logger.warn( "Stop hook: Driver.shutdown: ERROR: process=" + processRun, e );
-                    }
-                }
-
-                if ( processRun != null )
-                {
-                    try
-                    {
-                        stopApplication();
-                    }
-                    catch ( Exception e )
-                    {
-                        logger.warn( "Stop hook: stopApplication: FAILED: process=" + processRun, e );
-                    }
-                }
-            } ) );
+            Runtime.getRuntime().addShutdownHook( shutdownHook );
         }
 
 
@@ -318,6 +290,16 @@ public class GuiLauncher
      */
     public void stopApplication()
     {
+
+        if ( shutdownHook != null )
+        {
+            Runtime.getRuntime().removeShutdownHook( shutdownHook );
+
+            logger.debug( format( "Removed ShutdownHook: shutdownHook=[%s].", shutdownHook ) );
+
+            shutdownHook = null;
+        }
+
         if ( processRun == null )
         {
             if ( logger.isDebugEnabled() )
@@ -356,29 +338,22 @@ public class GuiLauncher
     {
         final boolean[] wasAccessed = { false };
 
-        Waiter w = new Waiter()
-        {
-            public boolean until()
-            {
-                try
-                {
-                    wasAccessed[ 0 ] = ( "hello".equals( driver.echo( "hello" ) ) );
-                }
-                catch ( Exception e )
-                {
-                    // expect all kinds of reasons why it's not accessible
-                }
+        Waiter8 w = new Waiter8()
+                .until( () -> {
+                    try
+                    {
+                        wasAccessed[ 0 ] = ( "hello".equals( driver.echo( "hello" ) ) );
+                    }
+                    catch ( Exception e )
+                    {
+                        // expect all kinds of reasons why it's not accessible
+                    }
 
-                return wasAccessed[ 0 ];
-            }
-
-            public void onTimeout( long millis )
-            {
-                wasAccessed[ 0 ] = false;
-            }
-        }
-                .withDelay( 500 )
-                .withTimeout( DateUtils.secondsToMillis( timeoutSeconds ) )
+                    return wasAccessed[ 0 ];
+                } )
+                .onTimeout( millis -> wasAccessed[ 0 ] = false )
+                .withDelayMillis( 500 )
+                .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
                 .start();
 
 
@@ -459,4 +434,43 @@ public class GuiLauncher
     {
         this.addShutdownHook = addShutdownHook;
     }
+
+
+    private Thread newShutdownHook()
+    {
+        return new Thread( () ->
+        {
+            logger.info( "Running stop hook: process=" + processRun );
+
+            if ( driver != null )
+            {
+                try
+                {
+                    Object response = driver.shutdown( 0 );
+
+                    if ( logger.isDebugEnabled() )
+                    {
+                        logger.debug( "Stop hook: Driver.shutdown: response=" + response );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.warn( "Stop hook: Driver.shutdown: ERROR: process=" + processRun, e );
+                }
+            }
+
+            if ( processRun != null )
+            {
+                try
+                {
+                    stopApplication();
+                }
+                catch ( Exception e )
+                {
+                    logger.warn( "Stop hook: stopApplication: FAILED: process=" + processRun, e );
+                }
+            }
+        } );
+    }
+
 }

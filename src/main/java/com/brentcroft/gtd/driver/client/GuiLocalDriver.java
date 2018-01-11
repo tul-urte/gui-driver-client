@@ -3,9 +3,9 @@ package com.brentcroft.gtd.driver.client;
 
 import com.brentcroft.gtd.utilities.CanonicalPath;
 import com.brentcroft.gtd.utilities.DataLimit;
-import com.brentcroft.gtd.utilities.Waiter;
-import com.brentcroft.gtd.utilities.XPathUtils;
-import com.brentcroft.gtd.utilities.XmlUtils;
+import com.brentcroft.util.Waiter8;
+import com.brentcroft.util.XPathUtils;
+import com.brentcroft.util.XmlUtils;
 import java.util.Map;
 import java.util.Properties;
 import javax.xml.xpath.XPathConstants;
@@ -13,6 +13,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
 
 /**
@@ -172,13 +173,13 @@ public class GuiLocalDriver extends AbstractGuiLocalDriver implements GuiDriver
     @Override
     public void delay( long millis )
     {
-        Waiter.delay( millis );
+        Waiter8.delay( millis );
     }
 
     @Override
     public void delaySeconds( double seconds )
     {
-        Waiter.delaySeconds( seconds );
+        delay( secondsToMillis( seconds ) );
     }
 
 
@@ -383,17 +384,10 @@ public class GuiLocalDriver extends AbstractGuiLocalDriver implements GuiDriver
     {
         try
         {
-            final boolean[] value = { false };
-
-            new Waiter()
-            {
-                public boolean until()
-                {
-                    return getComponentResult( path, booleanPath );
-                }
-            }
-                    .withDelaySeconds( pollIntervalSeconds )
-                    .withTimeoutSeconds( timeoutSeconds )
+            new Waiter8()
+                    .until( () -> getComponentResult( path, booleanPath ) )
+                    .withDelayMillis( secondsToMillis( pollIntervalSeconds ) )
+                    .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
                     .start();
 
             return true;

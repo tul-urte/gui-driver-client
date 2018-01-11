@@ -1,7 +1,6 @@
 package com.brentcroft.gtd.driver.client;
 
-import com.brentcroft.gtd.utilities.Waiter;
-import com.brentcroft.gtd.utilities.Waiter8;
+import com.brentcroft.util.Waiter8;
 import java.util.Properties;
 
 import static java.lang.String.format;
@@ -74,15 +73,16 @@ public class BrowserAdapter extends DefaultGuiAdapter
         driver.setText( uriInputPath, uri, timeoutSeconds );
 
 
-        new Waiter()
+        new Waiter8()
         {
             public boolean until()
             {
                 return uri.equals( driver.getText( uriInputPath ) );
             }
         }
-                .withTimeoutSeconds( timeoutSeconds )
-                .withDelaySeconds( 1 )
+                .until( () -> uri.equals( driver.getText( uriInputPath ) ) )
+                .withTimeoutMillis( Double.valueOf( timeoutSeconds ).longValue() * 1000 )
+                .withDelayMillis( 1000 )
                 .start();
 
         logger.info( "Uri path assigned: " + uri );

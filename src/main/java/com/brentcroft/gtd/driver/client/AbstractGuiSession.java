@@ -1,6 +1,6 @@
 package com.brentcroft.gtd.driver.client;
 
-import com.brentcroft.gtd.utilities.TextUtils;
+import com.brentcroft.util.TextUtils;
 import com.brentcroft.util.CommentedProperties;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.brentcroft.gtd.driver.client;
 
 import com.brentcroft.gtd.driver.GuiControllerMBean;
-import com.brentcroft.gtd.utilities.Waiter;
-import com.brentcroft.gtd.utilities.Waiter8;
-import com.brentcroft.gtd.utilities.buffer.AsynchBuffer;
+import com.brentcroft.util.buffer.AsynchBuffer;
+import com.brentcroft.util.DateUtils;
+import com.brentcroft.util.Waiter8;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +96,7 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
     {
         if ( defaultRelaxSeconds > 0 )
         {
-            Waiter.delaySeconds( defaultRelaxSeconds );
+            Waiter8.delay( DateUtils.secondsToMillis( defaultRelaxSeconds ) );
         }
     }
 
@@ -148,13 +148,13 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
             // to receive relayed notifications
             // allow retries - as can fail first time
             new Waiter8()
-                    .withTimeout( ( t ) ->
+                    .onTimeout( ( t ) ->
                     {
                         logger.warn( format( "[%s] Giving up trying to attach remote notification listener: %s", serial, controller ) );
                     } )
                     .withTimeoutMillis( 5000 )
-                    .withDelay( 100 )
-                    .withUntil( this::attachRemoteNotificationListener )
+                    .withDelayMillis( 100 )
+                    .until( this::attachRemoteNotificationListener )
                     .start();
 
 

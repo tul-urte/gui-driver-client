@@ -1,10 +1,9 @@
 package com.brentcroft.gtd.driver.client;
 
-import com.brentcroft.gtd.utilities.Waiter8;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.Properties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static java.lang.String.format;
 

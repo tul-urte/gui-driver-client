@@ -1,11 +1,11 @@
 package com.brentcroft.gtd.driver.client.methods;
 
 import com.brentcroft.gtd.driver.client.GuiDriver;
-import com.brentcroft.gtd.utilities.DateUtils;
 import java.util.Objects;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
 
 /**
@@ -28,12 +28,10 @@ public class GenericMethods
      * <p>
      * The root node has the node path: "1", hence all non-empty node paths begin with "1".<br/>
      *
-     * @param path
-     *            the path to the tree component
-     * @param nodePath
-     *            the path in the tree to the node (e.g. "1:2:2:3" )
+     * @param path     the path to the tree component
+     * @param nodePath the path in the tree to the node (e.g. "1:2:2:3" )
      */
-    public static void selectTreeNode(GuiDriver driver,String path, String nodePath, double timeoutSeconds )
+    public static void selectTreeNode( GuiDriver driver, String path, String nodePath, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -56,12 +54,10 @@ public class GenericMethods
      * <p>
      * The row is specified by an integer string.<br/>
      *
-     * @param path
-     *            the path to the table component
-     * @param row
-     *            an integer string representing the row to be selected
+     * @param path the path to the table component
+     * @param row  an integer string representing the row to be selected
      */
-    public static void selectTableRow(GuiDriver driver, String path, int row, double timeoutSeconds )
+    public static void selectTableRow( GuiDriver driver, String path, int row, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -77,7 +73,7 @@ public class GenericMethods
     }
 
 
-    public static void selectTableCell(GuiDriver driver, String path, int row, int column, double timeoutSeconds )
+    public static void selectTableCell( GuiDriver driver, String path, int row, int column, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -99,12 +95,10 @@ public class GenericMethods
      * <p>
      * The item index is specified by an integer string.<br/>
      *
-     * @param path
-     *            the path to the list or combobox component
-     * @param index
-     *            an integer string representing the index to be selected
+     * @param path  the path to the list or combobox component
+     * @param index an integer string representing the index to be selected
      */
-    public static void setSelectedIndex(GuiDriver driver, String path, int index, double timeoutSeconds )
+    public static void setSelectedIndex( GuiDriver driver, String path, int index, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -124,12 +118,10 @@ public class GenericMethods
     /**
      * Enter text into a component (that can accept text, i.e. has a setText(String text) method).<br/>
      *
-     * @param path
-     *            the path to the component that can accept text
-     * @param text
-     *            the text to enter into the specified component
+     * @param path the path to the component that can accept text
+     * @param text the text to enter into the specified component
      */
-    public static void enterText(GuiDriver driver, String path, String text, double timeoutSeconds )
+    public static void enterText( GuiDriver driver, String path, String text, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -148,12 +140,10 @@ public class GenericMethods
     /**
      * Type text (i.e. send KEY_MODEL strokes) into a component.<br/>
      *
-     * @param path
-     *            the path to the component that can accept keystrokes
-     * @param text
-     *            the text (keys) to enter into the specified component
+     * @param path the path to the component that can accept keystrokes
+     * @param text the text (keys) to enter into the specified component
      */
-    public static void typeText(GuiDriver driver, String path, String text, double timeoutSeconds )
+    public static void typeText( GuiDriver driver, String path, String text, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -172,10 +162,9 @@ public class GenericMethods
     /**
      * Click on a component.<br/>
      *
-     * @param path
-     *            the path to the component that will be clicked on
+     * @param path the path to the component that will be clicked on
      */
-    public static void clickOnComponent(GuiDriver driver, String path, double timeoutSeconds )
+    public static void clickOnComponent( GuiDriver driver, String path, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -194,10 +183,9 @@ public class GenericMethods
     /**
      * Double click on a component.<br/>
      *
-     * @param path
-     *            the path to the component that will be double clicked on
+     * @param path the path to the component that will be double clicked on
      */
-    public static void doubleClickOnComponent(GuiDriver driver, String path, double timeoutSeconds )
+    public static void doubleClickOnComponent( GuiDriver driver, String path, double timeoutSeconds )
     {
         if ( logger.isDebugEnabled() )
         {
@@ -214,13 +202,13 @@ public class GenericMethods
 
 
     public static void waitUntilItemCountMoreThan( final GuiDriver driver, String path, final Integer expectedCount,
-            final Double secondsToWait )
+                                                   final Double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
         Integer actualAmount = null;
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             actualAmount = driver.getItemCount( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) );
@@ -238,18 +226,18 @@ public class GenericMethods
 
 
     public static void waitUntilItemCountEqual( final GuiDriver driver, String path, final Integer expectedCount,
-            final Double secondsToWait )
+                                                final Double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
         Integer actualAmount = null;
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             actualAmount = driver.getItemCount( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) );
 
-            if ( actualAmount != null && Objects.equals(actualAmount, expectedCount))
+            if ( actualAmount != null && Objects.equals( actualAmount, expectedCount ) )
             {
                 // ok
                 return;
@@ -262,13 +250,13 @@ public class GenericMethods
 
 
     public static void waitUntilItemCountLessThan( final GuiDriver driver, String path, final Integer expectedCount,
-            final Double secondsToWait )
+                                                   final Double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
         Integer actualAmount = null;
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             actualAmount = driver.getItemCount( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) );
@@ -285,13 +273,13 @@ public class GenericMethods
     }
 
 
-    public static void waitUntilNotEmpty(GuiDriver driver, String path, Double secondsToWait )
+    public static void waitUntilNotEmpty( GuiDriver driver, String path, Double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
         String text = null;
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             text = driver.getText( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) );
@@ -306,13 +294,13 @@ public class GenericMethods
                 format( "Path [%s] still has text [%s] even after [%s] seconds.", path, text, secondsToWait ) );
     }
 
-    public static void waitUntilText(GuiDriver driver, String path, final String expectedText, double secondsToWait )
+    public static void waitUntilText( GuiDriver driver, String path, final String expectedText, double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
         String text = null;
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             text = driver.getText( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) );
@@ -330,11 +318,11 @@ public class GenericMethods
     }
 
 
-    public static void waitUntilExists(GuiDriver driver, String path, double secondsToWait )
+    public static void waitUntilExists( GuiDriver driver, String path, double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
             if ( driver.exists( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) ) )
@@ -347,13 +335,13 @@ public class GenericMethods
     }
 
 
-    public static void waitUntilNotExists(GuiDriver driver, String path, Double secondsToWait )
+    public static void waitUntilNotExists( GuiDriver driver, String path, Double secondsToWait )
     {
         final long started = System.currentTimeMillis();
 
-        while ( ( System.currentTimeMillis() - started ) < DateUtils.secondsToMillis( secondsToWait ) )
+        while ( ( System.currentTimeMillis() - started ) < secondsToMillis( secondsToWait ) )
         {
-            if ( !driver.exists( path,
+            if ( ! driver.exists( path,
                     ( secondsToWait - ( System.currentTimeMillis() - started ) ) ) )
             {
                 return;

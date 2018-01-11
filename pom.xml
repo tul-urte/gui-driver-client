@@ -21,9 +21,15 @@
 
 
     <dependencies>
+
         <dependency>
             <groupId>com.brentcroft.gtd</groupId>
             <artifactId>gui-driver-harness</artifactId>
+            <version>${gui-driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.brentcroft.gtd</groupId>
+            <artifactId>gui-driver-utils</artifactId>
             <version>${gui-driver.version}</version>
         </dependency>
 
