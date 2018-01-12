@@ -3,6 +3,7 @@ package com.brentcroft.gtd.driver.client;
 import com.brentcroft.util.Waiter8;
 import java.util.Properties;
 
+import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
 
 /**
@@ -74,14 +75,8 @@ public class BrowserAdapter extends DefaultGuiAdapter
 
 
         new Waiter8()
-        {
-            public boolean until()
-            {
-                return uri.equals( driver.getText( uriInputPath ) );
-            }
-        }
                 .until( () -> uri.equals( driver.getText( uriInputPath ) ) )
-                .withTimeoutMillis( Double.valueOf( timeoutSeconds ).longValue() * 1000 )
+                .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
                 .withDelayMillis( 1000 )
                 .start();
 
