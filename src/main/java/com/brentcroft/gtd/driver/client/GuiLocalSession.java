@@ -2,8 +2,7 @@ package com.brentcroft.gtd.driver.client;
 
 
 import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import static java.lang.String.format;
 
@@ -12,7 +11,7 @@ import static java.lang.String.format;
  */
 public class GuiLocalSession extends AbstractGuiSession
 {
-    private final static transient Log logger = LogFactory.getLog( GuiLocalSession.class );
+    private final static Logger logger = Logger.getLogger( GuiLocalSession.class );
 
     private Long started = null;
     private Long stopped = null;

@@ -2,8 +2,7 @@ package com.brentcroft.gtd.driver.client.methods;
 
 import com.brentcroft.gtd.driver.client.GuiDriver;
 import java.util.Objects;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
@@ -13,10 +12,7 @@ import static java.lang.String.format;
  */
 public class GenericMethods
 {
-    private final static transient Log logger = LogFactory.getLog( GenericMethods.class );
-
-    public static final double DEFAULT_WAIT_TO_EXIST = 10.0;
-
+    private final static transient Logger logger = Logger.getLogger( GenericMethods.class );
 
     /**
      * Select a node in a tree.<br/>

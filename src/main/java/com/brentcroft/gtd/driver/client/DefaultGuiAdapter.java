@@ -1,17 +1,16 @@
 package com.brentcroft.gtd.driver.client;
 
 import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * Created by adobson on 20/05/2016.
  */
 public class DefaultGuiAdapter implements GuiAdapter
 {
-    protected final static transient Log logger = LogFactory.getLog( DefaultGuiAdapter.class );
+    protected final static Logger logger = Logger.getLogger( DefaultGuiAdapter.class );
 
-    protected Properties credentials = new Properties();
+    private Properties credentials = new Properties();
 
     protected interface Key
     {
@@ -69,6 +68,11 @@ public class DefaultGuiAdapter implements GuiAdapter
     public boolean hasCredentials()
     {
         return credentials != null;
+    }
+
+    public Properties getCredentials()
+    {
+        return credentials;
     }
 
 

@@ -1,9 +1,9 @@
 package com.brentcroft.gtd.driver.client;
 
 import com.brentcroft.gtd.driver.GuiControllerMBean;
-import com.brentcroft.util.buffer.AsynchBuffer;
 import com.brentcroft.util.DateUtils;
 import com.brentcroft.util.Waiter8;
+import com.brentcroft.util.buffer.AsynchBuffer;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,14 +18,13 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import static java.lang.String.format;
 
 public abstract class AbstractGuiLocalDriver implements GuiDriver
 {
-    private final static transient Log logger = LogFactory.getLog( AbstractGuiLocalDriver.class );
+    private final static Logger logger = Logger.getLogger( AbstractGuiLocalDriver.class );
 
     // provider a serial number for each driver
     private static int nextSerial = 0;

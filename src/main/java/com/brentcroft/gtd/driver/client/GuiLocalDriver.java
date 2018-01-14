@@ -1,8 +1,8 @@
 package com.brentcroft.gtd.driver.client;
 
 
-import com.brentcroft.gtd.utilities.CanonicalPath;
-import com.brentcroft.gtd.utilities.DataLimit;
+import com.brentcroft.gtd.driver.utils.CanonicalPath;
+import com.brentcroft.gtd.driver.utils.DataLimit;
 import com.brentcroft.util.Waiter8;
 import com.brentcroft.util.XPathUtils;
 import com.brentcroft.util.XmlUtils;

@@ -43,18 +43,18 @@ public class BrowserAdapter extends DefaultGuiAdapter
         {
             if ( newCredentials.containsKey( c.key() ) )
             {
-                credentials.put( c.key(), newCredentials.get( c.key() ) );
+                getCredentials().put( c.key(), newCredentials.get( c.key() ) );
             }
         }
     }
 
     public void login( double timeoutSeconds )
     {
-        String uri = ( String ) credentials.get( Credential.INITIAL_URI.key() );
+        String uri = ( String ) getCredentials().get( Credential.INITIAL_URI.key() );
 
         if ( uri == null )
         {
-            logger.warn( format( "Credentials do not contain [%s]: %s", Credential.INITIAL_URI.key(), credentials ) );
+            logger.warn( format( "Credentials do not contain [%s]: %s", Credential.INITIAL_URI.key(), getCredentials() ) );
 
             throw new RuntimeException( format( "Credentials do not contain [%s], NOT assigning uri path.", Credential.INITIAL_URI.key(), uri ) );
         }

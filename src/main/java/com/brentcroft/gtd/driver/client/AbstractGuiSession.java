@@ -1,19 +1,14 @@
 package com.brentcroft.gtd.driver.client;
 
-import com.brentcroft.util.TextUtils;
 import com.brentcroft.util.CommentedProperties;
+import com.brentcroft.util.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import static java.lang.String.format;
 
 public abstract class AbstractGuiSession implements GuiSession
 {
-    private final static transient Log logger = LogFactory.getLog( AbstractGuiSession.class );
-
     private State state = State.UNKNOWN;
 
     private CommentedProperties sessionProperties = new CommentedProperties();
@@ -108,18 +103,17 @@ public abstract class AbstractGuiSession implements GuiSession
         return state;
     }
 
-    protected void changeState(State newState)
+    protected void changeState( State newState )
     {
         State oldState = state;
 
         this.state = newState;
 
-        for (StateListener sl : listeners)
+        for ( StateListener sl : listeners )
         {
             sl.stateChange( oldState, newState );
         }
     }
-
 
 
     public interface StateListener
@@ -127,11 +121,11 @@ public abstract class AbstractGuiSession implements GuiSession
         void stateChange( State oldState, State newState );
     }
 
-    private List<StateListener> listeners = new ArrayList<>();
+    private List< StateListener > listeners = new ArrayList<>();
 
-    public void addStateListener(StateListener l)
+    public void addStateListener( StateListener l )
     {
-     listeners.add( l );
+        listeners.add( l );
     }
 
 }

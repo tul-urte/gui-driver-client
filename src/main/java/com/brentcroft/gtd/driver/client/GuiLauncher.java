@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import static com.brentcroft.util.DateUtils.secondsToMillis;
 import static java.lang.String.format;
@@ -23,8 +22,8 @@ import static java.lang.String.format;
  */
 public class GuiLauncher
 {
-    private final static transient Log logger = LogFactory.getLog( GuiLauncher.class );
-    private final static transient Log harnessLogger = LogFactory.getLog( "HARNESS" );
+    private final static transient Logger logger = Logger.getLogger( GuiLauncher.class );
+    private final static transient Logger harnessLogger = Logger.getLogger( "HARNESS" );
 
 
     protected File workingDirectory = null;
