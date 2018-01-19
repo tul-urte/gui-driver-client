@@ -11,10 +11,10 @@ import static java.lang.String.format;
  */
 public class BrowserAdapter extends DefaultGuiAdapter
 {
-    protected final String uriInputPath = "descendant-or-self::BorderPane/HBox/TextField[ ( @id='pageAddress' ) ]";
-    protected final String uriLoadPath = "descendant-or-self::BorderPane/HBox/Button[ ( @id='pageAddressGet' ) ]";
+    private final String uriInputPath = "descendant-or-self::BorderPane/ToolBar/TextField[ ( @id='url' ) ]";
+    private final String uriLoadPath = "descendant-or-self::BorderPane/ToolBar/Button[ ( @id='get' ) ]";
 
-    protected final String logoutKeys = "{Alt+F4}";
+    private final String logoutKeys = "{Alt+F4}";
 
 
     enum Credential implements Key
