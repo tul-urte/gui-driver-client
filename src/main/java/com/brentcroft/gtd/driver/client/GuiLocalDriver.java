@@ -385,10 +385,9 @@ public class GuiLocalDriver extends AbstractGuiLocalDriver implements GuiDriver
         try
         {
             new Waiter8()
-                    .until( () -> getComponentResult( path, booleanPath ) )
                     .withDelayMillis( secondsToMillis( pollIntervalSeconds ) )
                     .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
-                    .start();
+                    .until( () -> getComponentResult( path, booleanPath ) );
 
             return true;
         }

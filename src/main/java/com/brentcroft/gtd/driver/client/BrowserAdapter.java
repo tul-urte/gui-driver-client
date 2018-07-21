@@ -16,7 +16,6 @@ public class BrowserAdapter extends DefaultGuiAdapter
 
     private final String logoutKeys = "{Alt+F4}";
 
-
     enum Credential implements Key
     {
         INITIAL_URI( "initial-uri" );
@@ -34,7 +33,6 @@ public class BrowserAdapter extends DefaultGuiAdapter
         }
     }
 
-
     public void setCredentials( Properties newCredentials )
     {
         super.setCredentials( newCredentials );
@@ -50,13 +48,15 @@ public class BrowserAdapter extends DefaultGuiAdapter
 
     public void login( double timeoutSeconds )
     {
-        String uri = ( String ) getCredentials().get( Credential.INITIAL_URI.key() );
+        String uri = (String) getCredentials().get( Credential.INITIAL_URI.key() );
 
         if ( uri == null )
         {
-            logger.warn( format( "Credentials do not contain [%s]: %s", Credential.INITIAL_URI.key(), getCredentials() ) );
+            logger.warn(
+                    format( "Credentials do not contain [%s]: %s", Credential.INITIAL_URI.key(), getCredentials() ) );
 
-            throw new RuntimeException( format( "Credentials do not contain [%s], NOT assigning uri path.", Credential.INITIAL_URI.key(), uri ) );
+            throw new RuntimeException( format( "Credentials do not contain [%s], NOT assigning uri path.",
+                    Credential.INITIAL_URI.key(), uri ) );
         }
 
         if ( driver == null )
@@ -64,21 +64,19 @@ public class BrowserAdapter extends DefaultGuiAdapter
             throw new NullPointerException( "Driver is null!" );
         }
 
-
         // is the field available yet
-        if ( ! driver.exists( uriInputPath, timeoutSeconds ) )
+        if ( !driver.exists( uriInputPath, timeoutSeconds ) )
         {
-            throw new RuntimeException( format( "Target not available [%s] after [%s] seconds.", uriInputPath, timeoutSeconds ) );
+            throw new RuntimeException(
+                    format( "Target not available [%s] after [%s] seconds.", uriInputPath, timeoutSeconds ) );
         }
 
         driver.setText( uriInputPath, uri, timeoutSeconds );
 
-
         new Waiter8()
-                .until( () -> uri.equals( driver.getText( uriInputPath ) ) )
                 .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
                 .withDelayMillis( 1000 )
-                .start();
+                .until( () -> uri.equals( driver.getText( uriInputPath ) ) );
 
         logger.info( "Uri path assigned: " + uri );
 

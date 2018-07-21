@@ -25,9 +25,7 @@ public class GuiLauncher
     private final static transient Logger logger = Logger.getLogger( GuiLauncher.class );
     private final static transient Logger harnessLogger = Logger.getLogger( "HARNESS" );
 
-
     protected File workingDirectory = null;
-
 
     private String applicationUri = null;
     private String javaCommand = null;
@@ -58,22 +56,21 @@ public class GuiLauncher
         this.driver = driver;
     }
 
-
     public String toString()
     {
         return format(
                 "applicationUri=%s%n" +
-                "javaCommand=%s%n" +
-                "javaVmOptions=%s%n" +
-                "javaClassPathRoot=%s%n" +
-                "javaClassPath=%s%n" +
-                "applicationMainClass=%s%n" +
-                "applicationServiceClass=%s%n" +
-                "applicationNotifyAWTMask=%s%n" +
-                "applicationNotifySnapshotDelay=%s%n" +
-                "applicationHashCache=%s%n" +
-                "firstEchoTimeout=%s%n" +
-                "addShutdownHook=%s",
+                        "javaCommand=%s%n" +
+                        "javaVmOptions=%s%n" +
+                        "javaClassPathRoot=%s%n" +
+                        "javaClassPath=%s%n" +
+                        "applicationMainClass=%s%n" +
+                        "applicationServiceClass=%s%n" +
+                        "applicationNotifyAWTMask=%s%n" +
+                        "applicationNotifySnapshotDelay=%s%n" +
+                        "applicationHashCache=%s%n" +
+                        "firstEchoTimeout=%s%n" +
+                        "addShutdownHook=%s",
                 applicationUri,
                 javaCommand,
                 javaVmOptions,
@@ -85,10 +82,8 @@ public class GuiLauncher
                 applicationNotifySnapshotDelay,
                 applicationHashCache,
                 firstEchoTimeout,
-                addShutdownHook
-        );
+                addShutdownHook );
     }
-
 
     public boolean isWebStart()
     {
@@ -112,11 +107,10 @@ public class GuiLauncher
         {
             Collections.addAll( commands, javaCommand.split( "\\s+" ) );
 
-            if ( javaVmOptions != null && ! javaVmOptions.isEmpty() )
+            if ( javaVmOptions != null && !javaVmOptions.isEmpty() )
             {
                 Collections.addAll( commands, javaVmOptions.split( "\\s+" ) );
             }
-
 
             commands.add( "-cp" );
             commands.add( buildClasspath() );
@@ -163,15 +157,15 @@ public class GuiLauncher
                 .append( "." )
                 .append( File.pathSeparator );
 
-
         // can't make sense as "." IS the working directory
         // since the process is started in the working directory
-//        if ( workingDirectory != null )
-//        {
-//            cp.append( ( File.pathSeparator + workingDirectory.getAbsolutePath() ).trim() );
-//        }
+        // if ( workingDirectory != null )
+        // {
+        // cp.append( ( File.pathSeparator + workingDirectory.getAbsolutePath() ).trim()
+        // );
+        // }
 
-        if ( javaClassPath != null && ! javaClassPath.isEmpty() )
+        if ( javaClassPath != null && !javaClassPath.isEmpty() )
         {
             final String ident = "###@@@";
             final String protocolA = ":/";
@@ -190,13 +184,11 @@ public class GuiLauncher
                                     : ( javaClassPathRoot + path.trim() ).trim() )
                             .collect( Collectors.joining( File.pathSeparator ) )
                             .replace( protocolAE, protocolA )
-                            .replace( protocolBE, protocolB )
-            );
+                            .replace( protocolBE, protocolB ) );
         }
 
         return cp.toString();
     }
-
 
     public void startApplication()
     {
@@ -207,17 +199,15 @@ public class GuiLauncher
 
         final List< String > commands = buildProcessCommands();
 
-
         final ProcessBuilder pb = new ProcessBuilder( commands );
 
         pb.directory( workingDirectory );
         pb.redirectErrorStream( true );
 
+        logger.info( format( "Starting program under test:\n  DIRECTORY: %s%n  COMMAND: %s", workingDirectory,
+                pb.command() ) );
 
-        logger.info( format( "Starting program under test:\n  DIRECTORY: %s%n  COMMAND: %s", workingDirectory, pb.command() ) );
-
-        new Thread( () ->
-        {
+        new Thread( () -> {
             try
             {
                 processRun = pb.start();
@@ -249,7 +239,7 @@ public class GuiLauncher
                 {
                     try
                     {
-                        //processRun.destroyForcibly();
+                        // processRun.destroyForcibly();
                         processRun.destroy();
                     }
                     catch ( Exception e2 )
@@ -262,7 +252,6 @@ public class GuiLauncher
             }
         } ).start();
 
-
         if ( addShutdownHook )
         {
             logger.info( "Adding stop hook to close program under test..." );
@@ -273,16 +262,16 @@ public class GuiLauncher
             Runtime.getRuntime().addShutdownHook( shutdownHook );
         }
 
+        logger.info(
+                format( "Waiting for harness to become available ...: firstEchoTimeout=[%s].", firstEchoTimeout ) );
 
-        logger.info( format( "Waiting for harness to become available ...: firstEchoTimeout=[%s].", firstEchoTimeout ) );
-
-        if ( ! isHarnessAccessible( driver, firstEchoTimeout ) )
+        if ( !isHarnessAccessible( driver, firstEchoTimeout ) )
         {
             throw new RuntimeException(
-                    format( "Harness was not accessible after [%s] seconds (first echo timed out).", firstEchoTimeout ) );
+                    format( "Harness was not accessible after [%s] seconds (first echo timed out).",
+                            firstEchoTimeout ) );
         }
     }
-
 
     /**
      * Call the appHandlers to logout and cleanup.
@@ -321,16 +310,18 @@ public class GuiLauncher
         }
     }
 
-
     /**
      * Wait for the harness to be accessible and ready for instructions.
      * <p/>
-     * This is determined by whether we can get an <code>echo( "hello" )</code> response using the driver.
+     * This is determined by whether we can get an <code>echo( "hello" )</code>
+     * response using the driver.
      * <p>
-     * In general this should be pretty quick, as the harness sets up the JMX apparatus early.
+     * In general this should be pretty quick, as the harness sets up the JMX
+     * apparatus early.
      * <p>
      *
-     * @param timeoutSeconds how long to wait before timing out
+     * @param timeoutSeconds
+     *            how long to wait before timing out
      * @return true if the harness is accessible
      */
     public boolean isHarnessAccessible( final GuiDriver driver, double timeoutSeconds )
@@ -338,6 +329,9 @@ public class GuiLauncher
         final boolean[] wasAccessed = { false };
 
         Waiter8 w = new Waiter8()
+                .withDelayMillis( 500 )
+                .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
+                .onTimeout( millis -> wasAccessed[ 0 ] = false )
                 .until( () -> {
                     try
                     {
@@ -349,12 +343,7 @@ public class GuiLauncher
                     }
 
                     return wasAccessed[ 0 ];
-                } )
-                .onTimeout( millis -> wasAccessed[ 0 ] = false )
-                .withDelayMillis( 500 )
-                .withTimeoutMillis( secondsToMillis( timeoutSeconds ) )
-                .start();
-
+                } );
 
         if ( logger.isDebugEnabled() )
         {
@@ -366,7 +355,6 @@ public class GuiLauncher
 
         return wasAccessed[ 0 ];
     }
-
 
     public void setApplicationUri( String applicationUri )
     {
@@ -397,7 +385,6 @@ public class GuiLauncher
     {
         this.workingDirectory = directory;
     }
-
 
     public void setApplicationMainClass( String applicationMainClass )
     {
@@ -434,11 +421,9 @@ public class GuiLauncher
         this.addShutdownHook = addShutdownHook;
     }
 
-
     private Thread newShutdownHook()
     {
-        return new Thread( () ->
-        {
+        return new Thread( () -> {
             logger.info( "Running stop hook: process=" + processRun );
 
             if ( driver != null )

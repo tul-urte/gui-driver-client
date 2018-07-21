@@ -48,7 +48,6 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
     private MBeanServerConnection serverConnection = null;
     private GuiControllerMBean controller = null;
 
-
     public void setMBeanRef( String mBeanRef )
     {
         this.mBeanRef = mBeanRef;
@@ -63,21 +62,19 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
                 "" + notification.getSource(),
                 notification.getSequenceNumber(),
                 notification.getTimeStamp(),
-                notification.getMessage()
-        );
+                notification.getMessage() );
 
         remoteNotificationBuffer.add( copy );
     };
 
-
     public String toString()
     {
         return format( "[%s]:# driver%n" +
-                       "jmxrmi.url=[%s]%n" +
-                       "mbean-ref=[%s]%n" +
-                       "default.pollDelay.seconds=[%s]%n" +
-                       "default.timeout.seconds=[%s]%n" +
-                       "default.relax.seconds=[%s]",
+                "jmxrmi.url=[%s]%n" +
+                "mbean-ref=[%s]%n" +
+                "default.pollDelay.seconds=[%s]%n" +
+                "default.timeout.seconds=[%s]%n" +
+                "default.relax.seconds=[%s]",
                 this.serial,
                 this.jmxRmiUrl,
                 this.mBeanRef,
@@ -87,8 +84,9 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
     }
 
     /**
-     * Pause for an amount of time <code>defaultRelaxSeconds</code>
-     * so that the target GUI can digest recent commands.<p/>
+     * Pause for an amount of time <code>defaultRelaxSeconds</code> so that the
+     * target GUI can digest recent commands.
+     * <p/>
      * This should be called after each and every harness invocation.
      */
     protected void relax()
@@ -99,7 +97,6 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         }
     }
 
-
     /**
      * Obtain a JMX Bean to manipulate and interrogate the Gui.
      *
@@ -107,7 +104,8 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
      * @throws IOException
      * @throws MalformedObjectNameException
      * @throws InstanceNotFoundException
-     * @throws Exception                    if the GuiControllerMBean instance can't be obtained.
+     * @throws Exception
+     *             if the GuiControllerMBean instance can't be obtained.
      */
     protected synchronized GuiControllerMBean remote()
     {
@@ -142,20 +140,17 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
                     GuiControllerMBean.class,
                     true );
 
-
             // register listener with the driver
             // to receive relayed notifications
             // allow retries - as can fail first time
             new Waiter8()
-                    .onTimeout( ( t ) ->
-                    {
-                        logger.warn( format( "[%s] Giving up trying to attach remote notification listener: %s", serial, controller ) );
-                    } )
                     .withTimeoutMillis( 5000 )
                     .withDelayMillis( 100 )
-                    .until( this::attachRemoteNotificationListener )
-                    .start();
-
+                    .onTimeout( ( t ) -> {
+                        logger.warn( format( "[%s] Giving up trying to attach remote notification listener: %s", serial,
+                                controller ) );
+                    } )
+                    .until( this::attachRemoteNotificationListener );
 
             controller = mbeanProxy;
 
@@ -181,7 +176,6 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         }
     }
 
-
     public void cleanup()
     {
         removeAllNotificationListeners();
@@ -196,19 +190,20 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
             {
                 serverConnection.addNotificationListener( mbeanName, remoteNotificationListener, null, null );
 
-                logger.debug( format( "[%s] Attached harness listener: [%s], listener=[%s].", serial, mBeanRef, remoteNotificationListener ) );
+                logger.debug( format( "[%s] Attached harness listener: [%s], listener=[%s].", serial, mBeanRef,
+                        remoteNotificationListener ) );
 
                 return true;
             }
             catch ( Exception e )
             {
-                //logger.warn( format( "[%s] Error attaching harness listener: [%s], listener=[%s]", serial, mBeanRef, remoteNotificationListener ), e );
+                // logger.warn( format( "[%s] Error attaching harness listener: [%s],
+                // listener=[%s]", serial, mBeanRef, remoteNotificationListener ), e );
             }
         }
 
         return false;
     }
-
 
     public void detachRemoteNotificationListener()
     {
@@ -216,10 +211,9 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         {
             try
             {
-                serverConnection.
-                        removeNotificationListener(
-                                mbeanName,
-                                remoteNotificationListener );
+                serverConnection.removeNotificationListener(
+                        mbeanName,
+                        remoteNotificationListener );
 
                 logger.debug( format( "[%s] Detached harness listener: [%s], listener=[%s].",
                         serial,
@@ -241,36 +235,30 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         }
     }
 
-
     public String getJmxRmiUrl()
     {
         return jmxRmiUrl;
     }
-
 
     public void setJmxRmiUrl( String jmxRmiUrl )
     {
         this.jmxRmiUrl = jmxRmiUrl;
     }
 
-
     public double getDefaultPollDelaySeconds()
     {
         return defaultPollDelaySeconds;
     }
-
 
     public void setDefaultPollDelaySeconds( double defaultPollDelaySeconds )
     {
         this.defaultPollDelaySeconds = defaultPollDelaySeconds;
     }
 
-
     public double getDefaultTimeout()
     {
         return defaultTimeoutSeconds;
     }
-
 
     public void setDefaultTimeout( double defaultTimeout )
     {
@@ -287,7 +275,6 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         return defaultRelaxSeconds;
     }
 
-
     // JMX Notification
 
     public void addNotificationListener( NotificationListener nl )
@@ -302,7 +289,7 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
 
     public void removeNotificationListener( NotificationListener nl )
     {
-        if ( ! notificationListeners.containsKey( nl.hashCode() ) )
+        if ( !notificationListeners.containsKey( nl.hashCode() ) )
         {
             return;
         }
@@ -330,7 +317,6 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
         }
     }
 
-
     private void notifyListeners( Notification notification )
     {
         if ( notificationListeners.isEmpty() )
@@ -349,8 +335,7 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
 
     private AsynchBuffer< Notification > createBuffer()
     {
-        return new AsynchBuffer< Notification >( format( "[%s] Notification Buffer", serial ) )
-        {
+        return new AsynchBuffer< Notification >( format( "[%s] Notification Buffer", serial ) ) {
             public void process( Notification notification )
             {
                 if ( logger.isTraceEnabled() )
