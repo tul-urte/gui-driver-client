@@ -47,8 +47,9 @@ public abstract class AbstractGuiSession implements GuiSession
                 "adapter=[%s]%n" +
                 "echoTimeoutSeconds=[%s]%n" +
                 "loginTimeoutSeconds=[%s]%n" +
-                "driver=",
+                "driver=%s",
                 this.guiAdapter,
+                this.echoTimeoutSeconds,
                 this.loginTimeoutSeconds,
                 TextUtils.indent( getDriver().toString() )
         );

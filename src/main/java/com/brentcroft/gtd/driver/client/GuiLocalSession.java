@@ -1,10 +1,13 @@
 package com.brentcroft.gtd.driver.client;
 
+import static java.lang.String.format;
 
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
-import static java.lang.String.format;
+import com.brentcroft.util.DateUtils;
+import com.brentcroft.util.TextUtils;
 
 /**
  * Created by Alaric on 21/10/2016.
@@ -20,14 +23,13 @@ public class GuiLocalSession extends AbstractGuiSession
 
     public boolean isStarted()
     {
-        return ! isStopped();
+        return !isStopped();
     }
 
     public boolean isStopped()
     {
         return started == null;
     }
-
 
     @Override
     public void start()
@@ -48,12 +50,12 @@ public class GuiLocalSession extends AbstractGuiSession
 
                 started = System.currentTimeMillis();
 
-                // re-send session properties to harness for configuration (might have reloaded config)
+                // re-send session properties to harness for configuration (might have reloaded
+                // config)
                 initialiseRemote();
 
                 return;
             }
-
 
             // try stopping it first
             // we already tried to connect
@@ -64,19 +66,21 @@ public class GuiLocalSession extends AbstractGuiSession
             //
             // stop();
 
+            if ( !launcher.isLaunchable() )
+            {
+                throw new RuntimeException();
+            }
 
             logger.info( "About to start the application..." );
 
             // ok - try starting it
             // will raise an exception if can't connect
 
-
             launcher.startApplication();
 
             changeState( State.STARTED );
 
             started = System.currentTimeMillis();
-
 
             // send session properties to harness for configuration
             initialiseRemote();
@@ -93,9 +97,10 @@ public class GuiLocalSession extends AbstractGuiSession
                 // there must have been an exception when starting the application
                 changeState( State.FAILED );
             }
+            
+            logger.info( format( "Session: %s", this ) );
         }
     }
-
 
     public void initialiseRemote()
     {
@@ -108,17 +113,15 @@ public class GuiLocalSession extends AbstractGuiSession
 
         getDriver().setProperties( p );
 
-        if ( onStartedScript != null && ! onStartedScript.isEmpty() )
+        if ( onStartedScript != null && !onStartedScript.isEmpty() )
         {
             getDriver().configure( onStartedScript );
         }
     }
 
-
     /**
-     * First tries to logout,
-     * then tries to stop the application,
-     * then tries to shutdown the harness harness.
+     * First tries to logout, then tries to stop the application, then tries to
+     * shutdown the harness harness.
      */
     @Override
     public void stop()
@@ -142,7 +145,6 @@ public class GuiLocalSession extends AbstractGuiSession
             }
         }
 
-
         if ( launcher != null )
         {
             try
@@ -162,7 +164,6 @@ public class GuiLocalSession extends AbstractGuiSession
             logger.info( "No launcher!" );
         }
 
-
         try
         {
             getDriver().shutdown( 0 );
@@ -181,9 +182,10 @@ public class GuiLocalSession extends AbstractGuiSession
             stopped = System.currentTimeMillis();
 
             changeState( State.STOPPED );
+            
+            logger.info( format( "Session: %s", this ) );
         }
     }
-
 
     /**
      * The adapter has to communicate with the harness using the driver
@@ -200,11 +202,10 @@ public class GuiLocalSession extends AbstractGuiSession
             return this;
         }
 
-        if ( ! guiAdapter.hasCredentials() )
+        if ( !guiAdapter.hasCredentials() )
         {
             guiAdapter.setCredentials( getProperties() );
         }
-
 
         guiAdapter.login( getLoginTimeoutSeconds() );
 
@@ -226,7 +227,7 @@ public class GuiLocalSession extends AbstractGuiSession
         // TODO should this have its own timeout??
         // the adapter is free to set a smaller one
         return guiAdapter != null
-               && guiAdapter.isLoggedIn( getLoginTimeoutSeconds() );
+                && guiAdapter.isLoggedIn( getLoginTimeoutSeconds() );
     }
 
     @Override
@@ -241,7 +242,6 @@ public class GuiLocalSession extends AbstractGuiSession
         return this;
     }
 
-
     @Override
     public GuiSession withCheckInstanceTimeout( double seconds )
     {
@@ -249,9 +249,18 @@ public class GuiLocalSession extends AbstractGuiSession
         return this;
     }
 
-
+    @Override
     public void setOnStarted( String onStartedScript )
     {
         this.onStartedScript = onStartedScript;
+    }
+
+    public String toString()
+    {
+        return format(
+                "started=[%s]%nstopped=[%s]%n%s",
+                started == null ? "-" : DateUtils.timestamp( started ),
+                stopped == null ? "-" : DateUtils.timestamp( stopped ),
+                super.toString() );
     }
 }

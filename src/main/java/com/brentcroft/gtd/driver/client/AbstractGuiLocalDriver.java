@@ -146,9 +146,11 @@ public abstract class AbstractGuiLocalDriver implements GuiDriver
             new Waiter8()
                     .withTimeoutMillis( 5000 )
                     .withDelayMillis( 100 )
-                    .onTimeout( ( t ) -> {
-                        logger.warn( format( "[%s] Giving up trying to attach remote notification listener: %s", serial,
-                                controller ) );
+                    .onTimeout( t -> {
+                        String msg = format( "[%s] Giving up trying to attach remote notification listener: %s", serial,
+                                jmxRmiUrl );
+                        logger.warn(msg);
+                        //throw new RuntimeException( msg );
                     } )
                     .until( this::attachRemoteNotificationListener );
 

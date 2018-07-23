@@ -84,6 +84,12 @@ public class GuiLauncher
                 firstEchoTimeout,
                 addShutdownHook );
     }
+    
+
+    public boolean isLaunchable()
+    {
+        return javaCommand != null;
+    }    
 
     public boolean isWebStart()
     {
@@ -340,6 +346,7 @@ public class GuiLauncher
                     catch ( Exception e )
                     {
                         // expect all kinds of reasons why it's not accessible
+                        logger.trace( "Harness Unaccessible..." );
                     }
 
                     return wasAccessed[ 0 ];
